@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 module.exports = {
     name: "repeat",
-    description: "reapeat playing music",
+    description: "reapeat music",
     /**
      * @param {Discord.Message} message
      * @param {Array} args
@@ -15,7 +15,7 @@ module.exports = {
                 }
             });
         }
-        
+
         if(global.player.queue.length > 0) {
             song = global.player.queue[0];
             if(typeof song.repeat == "boolean" && global.player.queue[0].repeat == true) global.player.queue[0].repeat = false;

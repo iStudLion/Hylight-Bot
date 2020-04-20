@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 module.exports = {
     name: "skip",
-    description: "skip playing music",
+    description: "skip music",
     /**
      * @param {Discord.Message} message
      * @param {Array} args
@@ -15,7 +15,7 @@ module.exports = {
                 }
             });
         }
-        
+
         if(global.player.queue.length > 0) {
             song = global.player.queue[0];
 
