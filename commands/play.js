@@ -1,6 +1,6 @@
 const Discord = require("discord.js");
 const key = "AIzaSyAXL-mp6UCOPFmmYTzKz3BXhulUP0oJE3s";
-const player = require("../player.js");
+const superagent = require("superagent");
 
 module.exports = {
     name: "play",
@@ -10,6 +10,15 @@ module.exports = {
      * @param {Array} args
      */
     execute: async (message, args) => {
+        if(!message.member.voice.channel || message.member.voice.channel.name.toLowerCase() != "music") {
+            return message.channel.send({
+                embed: {
+                    description: "You need to be the Music voice channel to execute this command.",
+                    color: 14963796
+                }
+            });
+        }
+
         if(args.length != 0) {
             if(args.length == 1 && isURL(args[0])) {
                 // argument is URL
@@ -39,37 +48,38 @@ module.exports = {
                         if(YT.items.length > 0) {
                             // prepare a new HTTP request to MusicEngine
                             let stripped_title = YT.items[0].snippet.title.replace(/( ?[\[\{\(] ?(?:(?:video|.*?remix|karaoke|lyrics?|.*?version.*?)? ?(?:off?icial)? ?(?:audio|(?:music|lyrics?)? ?video)?)[\]\)\}])/gi, '').replace(/[/\\:\*\?"<>\|]/g, ''),
-                            description = YT.items[0].snippet.description.replace(/(https?:\/\/.*?)\s/gi, "<$1> ");
+                            description = YT.items[0].snippet.description.replace(/(https?):\/\//gi, "$1:\\/\\/");
 
                             await superagent.get('http://api.musicengine.co/search')
                             .query({ token: 'wGWdNR7idwDR6gN5uRru6aHlpg5NSnRT', q: stripped_title })
                             .set('Accept', 'application/json')
                             .then(async (response) => {
                                 var ME = response.body;
-                                if(ME.response.hits.length > 0) {
-                                    player.addToQueue(msg, {
+                                if(ME.response.results > 0) {
+                                    global.player.addToQueue(msg, {
                                         id: YT.items[0].id.videoId,
                                         title: ME.response.hits[0].song.titles.title_full,
                                         description: description,
                                         cover: ME.response.hits[0].song.album.cover,
-                                        requested_by: message.author
+                                        requested_by: message.member.displayName
                                     });
                                 } else {
-                                    player.addToQueue(msg, {
+                                    global.player.addToQueue(msg, {
                                         id: YT.items[0].id.videoId,
                                         title: YT.items[0].snippet.title,
                                         description: YT.items[0].snippet.description,
                                         cover: YT.items[0].snippet.thumbnails.high.url,
-                                        requested_by: message.author.tag
+                                        requested_by: message.member.displayName
                                     });
                                 }
-                            }).catch(() => {
-                                player.addToQueue(msg, {
+                            }).catch((error) => {
+                                console.error(error);
+                                global.player.addToQueue(msg, {
                                     id: YT.items[0].id.videoId,
                                     title: YT.items[0].snippet.title,
                                     description: YT.items[0].snippet.description,
                                     cover: YT.items[0].snippet.thumbnails.high.url,
-                                    requested_by: message.author.tag
+                                    requested_by: message.member.displayName
                                 });
                             });
                         } else {
@@ -104,7 +114,12 @@ module.exports = {
                 });
             }
         } else {
-            // not enough aruments
+            message.channel.send({
+                embed: {
+                    description: `Not enough arguments. Try \`!play <query...>\` instead.`,
+                    color: 16733525
+                }
+            });
         }
     }
 }
