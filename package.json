@@ -1,0 +1,20 @@
+{
+  "name": "hylight",
+  "version": "1.0.0",
+  "description": "Hylight Discord Server Bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "iStudLion",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^12.2.0",
+    "ffmpeg": "0.0.4",
+    "npm": "^6.14.4",
+    "opusscript": "0.0.7",
+    "superagent": "^5.2.2",
+    "ytdl-core": "^2.1.0"
+  },
+  "devDependencies": {}
+}
