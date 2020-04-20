@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const key = "AIzaSyAXL-mp6UCOPFmmYTzKz3BXhulUP0oJE3s";
+const player = require("../player.js");
 
 module.exports = {
     name: "play",
@@ -46,36 +47,30 @@ module.exports = {
                             .then(async (response) => {
                                 var ME = response.body;
                                 if(ME.response.hits.length > 0) {
-                                    var song  = {
+                                    player.addToQueue(msg, {
                                         id: YT.items[0].id.videoId,
                                         title: ME.response.hits[0].song.titles.title_full,
                                         description: description,
                                         cover: ME.response.hits[0].song.album.cover,
-                                        requested_by: message.author.id
-                                    }
-
-                                    // TODO add song to queue
+                                        requested_by: message.author
+                                    });
                                 } else {
-                                    var song = {
+                                    player.addToQueue(msg, {
                                         id: YT.items[0].id.videoId,
                                         title: YT.items[0].snippet.title,
                                         description: YT.items[0].snippet.description,
                                         cover: YT.items[0].snippet.thumbnails.high.url,
                                         requested_by: message.author.tag
-                                    }
-
-                                    // TODO add song to queue
+                                    });
                                 }
-                            }).catch(error => {
-                                var song = {
+                            }).catch(() => {
+                                player.addToQueue(msg, {
                                     id: YT.items[0].id.videoId,
                                     title: YT.items[0].snippet.title,
                                     description: YT.items[0].snippet.description,
                                     cover: YT.items[0].snippet.thumbnails.high.url,
                                     requested_by: message.author.tag
-                                }
-
-                                // TODO add song to queue
+                                });
                             });
                         } else {
                             let response = {
