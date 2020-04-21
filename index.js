@@ -1,8 +1,8 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-const prefix = "!", token = "NDg1MTM4MjkyODYyNjE1NTYy.Xpz68w.YDSgB5ZHauVC_HZ0COkzcn-aoEU";
+
 const player = require("./player.js");
-// const prefix = process.env.PREFIX, token = process.env.TOKEN;
+const prefix = process.env.PREFIX, token = process.env.TOKEN;
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
