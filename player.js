@@ -125,7 +125,16 @@ module.exports = {
                     // establish a new voice connection
                     channel.join().then(connection => {
                         global.player.play(connection, message);
-                    }).catch(console.error);
+                    }).catch(error => {
+                        console.error(error);
+                        message.channel.send({
+                            embed: {
+                                description: `Bot couldn't establish a voice connection.`,
+                                color: 16733525
+                            }
+                        });
+                        channel.leave();
+                    });
                     return true;
                 }
             })) {
