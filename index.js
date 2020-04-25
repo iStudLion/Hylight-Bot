@@ -1,8 +1,49 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-
+const prefix = "!", token = "NDg1MTM4MjkyODYyNjE1NTYy.Xp5qdQ.81Qgn3xrsVwY-ISujObXSHOuRkk";
 const player = require("./player.js");
-const prefix = process.env.PREFIX, token = process.env.TOKEN;
+const express = require('express');
+const sqlite3 = require('sqlite3').verbose();
+const keepalive = require('express-glitch-keepalive');
+ 
+const app = express();
+app.use(keepalive);
+app.get('/', (req, res) => {
+  res.send('ok');
+});
+const listener = app.listen(process.env.PORT || 3000, () => {
+    console.log("Your app is listening on port " + listener.address().port);
+});
+
+global.db = new sqlite3.Database('./database.db');
+global.db.serialize(() => {
+	// create punishments table if it doesnt exist
+	global.db.get("SELECT COUNT(name) FROM sqlite_master WHERE type='table' AND name='punishments';", (err, res) => {
+		if(err) console.error(err);
+		else {
+			if(res[Object.keys(res)[0]] < 1) {
+				// create punishments table
+				db.run("CREATE TABLE `punishments` ( `id` VARCHAR(16) NOT NULL, `user` INT(18) NOT NULL , `type` VARCHAR(16) NOT NULL , `reason` TINYTEXT NOT NULL , `executor` INT(18) NOT NULL , `time` INT(10) NOT NULL , `expiration` INT(10) NOT NULL DEFAULT '0' , PRIMARY KEY (`id`) );");
+			}
+		}
+	});
+
+});
+
+global.db.get("SELECT * FROM `punishments`", (e, r) => {
+	if(e) console.error("ERROR: ",e);
+	console.log("RESULT: ",r);
+});
+
+global.randomStringGenerator = (length) => {
+	var result           = '';
+	var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	var charactersLength = characters.length;
+	for ( var i = 0; i < length; i++ ) {
+	   result += characters.charAt(Math.floor(Math.random() * charactersLength));
+	}
+	return result;
+};
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -71,10 +112,43 @@ client.on('ready', () => {
 	});
 });
 
-// client.on('guildMemberAdd', member => {
-// 	var role = member.guild.roles.find('name', 'Traveler');
-// 	member.addRole(role);
-// });
+client.on('guildMemberAdd', member => {
+	member.roles.add(member.guild.roles.cache.filter(role => role.name.toLowerCase() == "traveler").first());
+});
+
+client.on('voiceStateUpdate', (o, n) => {
+	if(o.channel && n.channel) {
+		// switch
+
+		// check if there's still people listening to music or leave
+		if(global.player.queue.length > 0) {
+			if(global.player.queue[0].connection) {
+				if(global.player.queue[0].connection.channel.id == o.channel.id) {
+					if(global.player.queue[0].connection.channel.members.filter(member => !member.user.bot).size < 1) {
+						global.player.queue[0].connection.dispatcher.end();
+						global.player.queue = [];
+					}
+				}
+			}
+		}
+	} else if(!o.channel) {
+		// join
+	} else if(!n.channel) {
+		// leave
+
+		// check if there's still people listening to music or leave
+		if(global.player.queue.length > 0) {
+			if(global.player.queue[0].connection) {
+				if(global.player.queue[0].connection.channel.id == o.channel.id) {
+					if(global.player.queue[0].connection.channel.members.filter(member => !member.user.bot).size < 1) {
+						global.player.queue[0].connection.dispatcher.end();
+						global.player.queue = [];
+					}
+				}
+			}
+		}
+	}
+});
 
 client.on('message', message => {
 	if(message.content.startsWith(prefix) || message.author.bot) return;
@@ -92,18 +166,17 @@ client.on('message', message => {
 
 	if(command == "stop" && message.author.id == "227168930806890496") {
 		message.delete();
-		if(message.guild.channels.cache.some(channel => {
-			if(channel.name.toLowerCase() == "logs") {
-				channel.send({
-					embed: {
-						description: `<@${message.member.id}> stopped the bot.`,
-						color: 16733525
-					}
-				});
-				return true;
-			}
-		})) client.destroy();
-		else client.destroy();
+		var logsChannel = message.guild.channels.cache.filter(ch => (ch.type == "text" && ch.name.toLowerCase() == "logs")).first();
+		if(logsChannel) {
+			logsChannel.send({
+				embed: {
+					description: `<@${message.member.id}> stopped the bot.`,
+					color: 16733525
+				}
+			}).then(() => {
+				client.destroy();
+			});
+		} else client.destroy();
 
 		return;
 	}
@@ -115,13 +188,13 @@ client.on('message', message => {
 		
 		message.channel.send({
 			"embed": {
-				"description": "Unknown Command. Try \"!help\" for a list of commands!",
+				"description": "Unknown Command. Try `!help` for a list of commands!",
 				"color": 16733525
 			}
 		}).then(msg => {
 			if(message.channel.name.toLowerCase() != "bot-commands") {
-				message.delete({timeout: 10000});
 				msg.delete({timeout:10000});
+				message.delete({timeout: 10000});
 			}
 		});
 	} else {
@@ -158,10 +231,11 @@ client.on('message', message => {
 	
 				if(typeof cmd.global == "undefined" || (typeof cmd.global == "boolean" && cmd.global != true)) {
 					if(message.channel.name.toLowerCase() != "bot-commands") {
+						var botChannel = message.guild.channels.cache.filter(ch => (ch.type == "text" && ch.name.toLowerCase() == "bot-commands")).first();
 						message.delete({timeout: 10000});
 						message.channel.send({
 							"embed": {
-							"description": `I only respond to \`!${cmd.name}\` in #bot-commands channel.`,
+							"description": `I only respond to \`!${cmd.name}\` in ${botChannel ? "<#"+botChannel.id+">" : "#bot-commands"} channel.`,
 							"color": 16733525
 							}
 						}).then(msg => msg.delete({timeout: 10000}));
@@ -189,4 +263,5 @@ client.on('message', message => {
 	}
 });
 
-client.login(token);
+// client.login(token);
+client.login("Njc1MTU2MzUxNzk3ODIxNDUw.XqNGTg.HQrmGHvcQN2DdbkzGhoA_tuuJjg");

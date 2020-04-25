@@ -24,6 +24,7 @@ module.exports = {
                 // argument is URL
                 if(!!args[0].match("/^https?://([a-z0-9_]+\.)(youtu.be|youtube.com)/i")) {
                     // url is from youtube
+                    const url = args[0];
                     var id = url.match("v=([a-zA-Z0-9\_\-]+)&?")[1];
                     var list = url.match("list=([a-zA-Z0-9\-\_]+)&?");
                     list = list ? list[1] : false;

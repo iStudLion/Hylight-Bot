@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 module.exports = {
     name: 'clear',
-    description: 'clear # messages',
+    description: 'clear messages',
     global: true,
     permissions: ["MANAGE_MESSAGES"],
     /**
@@ -135,7 +135,7 @@ module.exports = {
                             if(!message.deleted) message.delete({timeout: 10000});
                             return message.channel.send({
                                 embed: {
-                                    description: "Invalid amount. Try \"!clear [@user] <amount>\" instead.",
+                                    description: "Invalid amount. Try `!clear [@user] <amount>` instead.",
                                     color: 16733525
                                 }
                             }).then(msg => msg.delete({timeout: 10000}));
@@ -144,7 +144,7 @@ module.exports = {
                         if(!message.deleted) message.delete({timeout: 10000});
                         return message.channel.send({
                             embed: {
-                                description: "Invalid user. Try \"!clear [@user] <amount>\" instead.",
+                                description: "Invalid user. Try `!clear [@user] <amount>` instead.",
                                 color: 16733525
                             }
                         }).then(msg => msg.delete({timeout: 10000}));
@@ -153,7 +153,7 @@ module.exports = {
                 if(!message.deleted) message.delete({timeout: 10000});
                 return message.channel.send({
                     embed: {
-                        description: "Too many arguments. Try \"!clear [@user] <amount>\" instead.",
+                        description: "Too many arguments. Try `!clear [@user] <amount>` instead.",
                         color: 16733525
                     }
                 }).then(msg => msg.delete({timeout: 10000}));
@@ -162,7 +162,7 @@ module.exports = {
             if(!message.deleted) message.delete({timeout: 10000});
             return message.channel.send({
                 embed: {
-                    description: "Not enough arguments. Try \"!clear [@user] <amount>\" instead.",
+                    description: "Not enough arguments. Try `!clear [@user] <amount>` instead.",
                     color: 16733525
                 }
             }).then(msg => msg.delete({timeout: 10000}));
