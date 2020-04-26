@@ -6,5 +6,5 @@ package-lock.json
 start.bat
 bot.sln
 bot.njsproj
-*.db
+database.db
 Procfile
