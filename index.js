@@ -1,7 +1,7 @@
 const fs = require('fs');
 const Discord = require('discord.js');
 const prefix = "!", token = "NDg1MTM4MjkyODYyNjE1NTYy.Xp5qdQ.81Qgn3xrsVwY-ISujObXSHOuRkk";
-const player = require("./player.js");
+const player = require("./core/player.js");
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const keepalive = require('express-glitch-keepalive');
