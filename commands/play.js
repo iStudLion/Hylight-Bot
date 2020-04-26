@@ -6,10 +6,11 @@ module.exports = {
     name: "play",
     description: "play music",
     /**
-     * @param {Discord.Message} message
-     * @param {Array} args
+     * @param {Discord.Message} message 
+     * @param {string} label
+     * @param {Array} args 
      */
-    execute: async (message, args) => {
+    execute: async (message, label, args) => {
         if(!message.member.voice.channel || message.member.voice.channel.name.toLowerCase() != "music") {
             return message.channel.send({
                 embed: {
@@ -117,7 +118,7 @@ module.exports = {
         } else {
             message.channel.send({
                 embed: {
-                    description: `Not enough arguments. Try \`!play <query...>\` instead.`,
+                    description: `Not enough arguments. Try \`!${label} <query...>\` instead.`,
                     color: 16733525
                 }
             });

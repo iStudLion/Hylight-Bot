@@ -1,4 +1,8 @@
 node_modules/
+.vs/
+obj/
 package-lock.json
 .env
 start.bat
+bot.sln
+bot.njsproj

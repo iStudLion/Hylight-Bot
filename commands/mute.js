@@ -5,9 +5,10 @@ module.exports = {
     permissions: ["MANAGE_MESSAGES"],
     /**
      * @param {Discord.Message} message 
+     * @param {string} label
      * @param {Array} args 
-     */  
-	execute(message, args) {
+     */
+    execute(message, label, args) {
         
     }
 }

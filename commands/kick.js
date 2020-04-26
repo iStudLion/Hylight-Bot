@@ -6,9 +6,10 @@ module.exports = {
     permissions: ["KICK_MEMBERS"],
     /**
      * @param {Discord.Message} message 
+     * @param {string} label
      * @param {Array} args 
-     */  
-	execute(message, args) {
+     */
+    execute(message, label, args) {
         if(args.length > 1) {
             if(message.mentions.members.size == 1) {
                 if(!!args[0].match(/<@!\d{18,18}>/)) {
@@ -114,7 +115,7 @@ module.exports = {
                     if(!message.deleted) message.delete({timeout: 10000});
                     return message.channel.send({
                         embed: {
-                            description: "Invalid user. Try `!kick <@user> <reason>` instead.",
+                            description: `Invalid user. Try \`!${label} <@user> <reason>\` instead.`,
                             color: 16733525
                         }
                     }).then(msg => msg.delete({timeout: 10000}));
@@ -123,7 +124,7 @@ module.exports = {
                 if(!message.deleted) message.delete({timeout: 10000});
                 return message.channel.send({
                     embed: {
-                        description: "Invalid user. Try `!kick <@user> <reason>` instead.",
+                        description: `Invalid user. Try \`!${label} <@user> <reason>\` instead.`,
                         color: 16733525
                     }
                 }).then(msg => msg.delete({timeout: 10000}));
@@ -132,7 +133,7 @@ module.exports = {
             if(!message.deleted) message.delete({timeout: 10000});
             return message.channel.send({
                 embed: {
-                    description: "Not enough arguments. Try `!kick <@user> <reason>` instead.",
+                    description: `Not enough arguments. Try \`!${label} <@user> <reason>\` instead.`,
                     color: 16733525
                 }
             }).then(msg => msg.delete({timeout: 10000}));

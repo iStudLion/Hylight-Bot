@@ -1,7 +1,12 @@
 module.exports = {
 	name: 'help',
     description: 'list of all commands',
-	execute(message, args) {
+    /**
+     * @param {Discord.Message} message 
+     * @param {string} label
+     * @param {Array} args 
+     */
+    execute(message, label, args) {
         var commands = [];
         message.client.commands.some(command => {
             if(typeof command.permissions == "object") {
