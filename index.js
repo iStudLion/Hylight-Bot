@@ -1,6 +1,6 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-const prefix = "!", token = "NDg1MTM4MjkyODYyNjE1NTYy.Xp5qdQ.81Qgn3xrsVwY-ISujObXSHOuRkk";
+const prefix = "!", token = "";
 const player = require("./core/player.js");
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
@@ -277,5 +277,4 @@ client.on('message', message => {
     }
 });
 
-// client.login(token);
-client.login("Njc1MTU2MzUxNzk3ODIxNDUw.XqNGTg.HQrmGHvcQN2DdbkzGhoA_tuuJjg");
+client.login(token);
